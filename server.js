@@ -8,18 +8,43 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+/* --------------------------------------------------
+   Middleware
+-------------------------------------------------- */
+
 app.use(cors());
 app.use(express.json());
+
+/*
+  This works locally.
+
+  On Vercel, files inside public/ are served automatically.
+  express.static() may be ignored by Vercel, so the root
+  route below redirects users to public/index.html.
+*/
 app.use(express.static("public"));
 
+/* --------------------------------------------------
+   Environment-variable validation
+-------------------------------------------------- */
+
 if (!process.env.GEMINI_API_KEY) {
-  console.error("GEMINI_API_KEY is missing from the .env file.");
-  process.exit(1);
+  console.error(
+    "GEMINI_API_KEY is missing from the environment variables."
+  );
 }
+
+/* --------------------------------------------------
+   Gemini client
+-------------------------------------------------- */
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
+
+/* --------------------------------------------------
+   Role prompts
+-------------------------------------------------- */
 
 const ROLE_PROMPTS = {
   student: `
@@ -64,7 +89,7 @@ You are a professional HR and technical interviewer.
 
 Rules:
 1. Conduct realistic interview practice.
-2. Ask one question at a time when conducting a mock interview.
+2. Ask one question at a time during a mock interview.
 3. Evaluate the user's response constructively.
 4. Provide sample answers when requested.
 5. Include behavioural, communication and role-related questions.
@@ -92,18 +117,123 @@ Rules:
 3. Follow any word limit or marks specified by the user.
 4. Avoid unnecessary repetition.
 5. Provide original explanations rather than copying text.
-6. Do not pretend that unverified information is factual.
+6. Do not present unverified information as factual.
 `,
 };
 
-const DEFAULT_PROMPT = ROLE_PROMPTS.student;
+const DEFAULT_ROLE_PROMPT = ROLE_PROMPTS.student;
+
+/* --------------------------------------------------
+   Prompt-engineering technique prompts
+-------------------------------------------------- */
+
+const TECHNIQUE_PROMPTS = {
+  "zero-shot": `
+Use zero-shot prompting.
+
+Answer the user's request directly without relying on any examples.
+Use only the role instructions and the user's current request.
+`,
+
+  "one-shot": `
+Use one-shot prompting.
+
+Follow the response style shown in this example:
+
+Example question:
+What is artificial intelligence?
+
+Example answer:
+Artificial intelligence is the ability of a computer system to
+perform tasks that normally require human intelligence, such as
+learning, decision-making and understanding language.
+
+Answer the user's actual request using a similarly simple,
+clear and structured style.
+`,
+
+  "few-shot": `
+Use few-shot prompting.
+
+Follow the response style shown in these examples:
+
+Example 1:
+Question: What is IoT?
+Answer: IoT is a network of physical devices that collect and
+exchange data through the internet. A smart fitness watch is an
+example.
+
+Example 2:
+Question: What is cloud computing?
+Answer: Cloud computing provides servers, storage and software
+through the internet instead of requiring users to maintain all
+hardware locally.
+
+Example 3:
+Question: What is machine learning?
+Answer: Machine learning allows computers to learn patterns from
+data and improve predictions without being explicitly programmed
+for every situation.
+
+Answer the user's request using the same clear, direct and
+example-based style.
+`,
+
+  "role-based": `
+Use role-based prompting.
+
+Follow the selected role strictly, including its responsibilities,
+subject knowledge, response style and tone.
+`,
+
+  "structured-reasoning": `
+Analyse the task carefully and provide a structured explanation.
+
+Do not reveal hidden internal reasoning. Present only useful,
+clear and verifiable steps.
+
+When appropriate, organize the response as:
+
+1. Given information
+2. Relevant concept or method
+3. Important steps
+4. Final answer or conclusion
+`,
+};
+
+const DEFAULT_TECHNIQUE_PROMPT =
+  TECHNIQUE_PROMPTS["zero-shot"];
+
+/* --------------------------------------------------
+   Homepage route — fixes "Cannot GET /" on Vercel
+-------------------------------------------------- */
+
+app.get("/", (req, res) => {
+  res.redirect("/index.html");
+});
+
+/* --------------------------------------------------
+   Health-check route
+-------------------------------------------------- */
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "EduAssist Gemini server is running.",
+  });
+});
+
+/* --------------------------------------------------
+   Chat API route
+-------------------------------------------------- */
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message, role } = req.body;
-
-const systemPrompt =
-  ROLE_PROMPTS[role] || DEFAULT_PROMPT;
+    const {
+      message,
+      role = "student",
+      technique = "zero-shot",
+    } = req.body;
 
     if (
       !message ||
@@ -116,26 +246,68 @@ const systemPrompt =
       });
     }
 
-    if (message.trim().length > 4000) {
+    const cleanedMessage = message.trim();
+
+    if (cleanedMessage.length > 4000) {
       return res.status(400).json({
         success: false,
-        message: "Your question is too long.",
+        message:
+          "Your question is too long. Please shorten it.",
       });
     }
 
-    const interaction = await ai.interactions.create({
-      model: "gemini-3.6-flash",
-     input: `${systemPrompt}
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "The Gemini API key is not configured on the server.",
+      });
+    }
 
-User question:
-${message.trim()}`,
-      store: false,
-    });
+    const rolePrompt =
+      ROLE_PROMPTS[role] ||
+      DEFAULT_ROLE_PROMPT;
 
-    const reply = interaction.output_text;
+    const techniquePrompt =
+      TECHNIQUE_PROMPTS[technique] ||
+      DEFAULT_TECHNIQUE_PROMPT;
+
+    const finalPrompt = `
+CHATBOT ROLE INSTRUCTIONS:
+
+${rolePrompt}
+
+PROMPT ENGINEERING TECHNIQUE:
+
+${techniquePrompt}
+
+GENERAL RESPONSE RULES:
+
+1. Answer the user's actual request.
+2. Keep the response accurate and relevant.
+3. Use Markdown headings, lists and tables when helpful.
+4. Use simple language unless the user requests technical detail.
+5. Clearly acknowledge uncertainty instead of inventing facts.
+
+USER REQUEST:
+
+${cleanedMessage}
+`.trim();
+
+    const interaction =
+      await ai.interactions.create({
+        model: "gemini-3.6-flash",
+        input: finalPrompt,
+        store: false,
+      });
+
+    const reply =
+      interaction.output_text?.trim();
 
     if (!reply) {
-      throw new Error("Gemini returned an empty response.");
+      throw new Error(
+        "Gemini returned an empty response."
+      );
     }
 
     return res.status(200).json({
@@ -145,17 +317,30 @@ ${message.trim()}`,
   } catch (error) {
     console.error("Gemini API error:", error);
 
+    const rawError =
+      error?.message ||
+      "Unknown Gemini API error.";
+
     let userMessage =
       "EduAssist could not generate a response. Please try again.";
 
-    if (error?.message?.includes("401")) {
+    if (
+      rawError.includes("401") ||
+      rawError.toLowerCase().includes("unauthenticated")
+    ) {
       userMessage =
-        "Authentication failed. Please create a fresh Gemini API key and restart the server.";
-    } else if (error?.message?.includes("429")) {
+        "Gemini authentication failed. Check the GEMINI_API_KEY environment variable.";
+    } else if (
+      rawError.includes("429") ||
+      rawError.toLowerCase().includes("quota")
+    ) {
       userMessage =
-        "The free API limit has been reached. Please wait and try again.";
-    } else if (error?.message) {
-      userMessage = error.message;
+        "The Gemini free API limit has been reached. Please wait and try again.";
+    } else if (
+      rawError.toLowerCase().includes("model")
+    ) {
+      userMessage =
+        "The selected Gemini model is unavailable. Check the model name.";
     }
 
     return res.status(500).json({
@@ -165,13 +350,14 @@ ${message.trim()}`,
   }
 });
 
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "EduAssist Gemini server is running.",
-  });
-});
+/* --------------------------------------------------
+   Local server
+-------------------------------------------------- */
 
 app.listen(PORT, () => {
-  console.log(`EduAssist is running at http://localhost:${PORT}`);
+  console.log(
+    `EduAssist is running at http://localhost:${PORT}`
+  );
 });
+
+export default app;

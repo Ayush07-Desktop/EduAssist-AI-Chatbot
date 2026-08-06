@@ -1,0 +1,25 @@
+{
+  "name": "eduassist-chatbot",
+  "version": "1.0.0",
+  "description": "Professional educational chatbot created for Prompt Engineering practical",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "chatbot",
+    "prompt-engineering",
+    "openai",
+    "education"
+  ],
+  "author": "Ayush Kumar Senapati",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^2.15.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.0.0"
+  }
+}

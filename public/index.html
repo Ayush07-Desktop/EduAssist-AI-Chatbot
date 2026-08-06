@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>EduAssist Chatbot</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <main class="chatbot-container">
+
+        <header class="chatbot-header">
+            <div class="brand-section">
+                <div class="logo">EA</div>
+
+                <div class="brand-text">
+                    <h1>EduAssist AI</h1>
+                    <p>Smart Prompt Engineering Chatbot</p>
+
+                    <small>
+                        Powered by Gemini AI • Role Prompting • Few-Shot Learning
+                    </small>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button id="aboutButton" class="header-button" type="button">
+                    About
+                </button>
+
+                <button id="clearButton" class="header-button" type="button">
+                    Clear Chat
+                </button>
+            </div>
+        </header>
+
+        <section class="prompt-controls">
+            <div class="control-group">
+                <label for="roleSelector">
+                    Chatbot Role
+                </label>
+
+                <select id="roleSelector">
+                    <option value="student">🎓 Student Assistant</option>
+                    <option value="teacher">👨‍🏫 Teacher</option>
+                    <option value="programmer">💻 Programmer</option>
+                    <option value="interviewer">💼 HR Interviewer</option>
+                    <option value="cloud">☁️ Cloud Engineer</option>
+                    <option value="assignment">📝 Assignment Assistant</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="techniqueSelector">
+                    Prompt Technique
+                </label>
+
+                <select id="techniqueSelector">
+                    <option value="zero-shot">
+                        Zero-Shot Prompting
+                    </option>
+
+                    <option value="one-shot">
+                        One-Shot Prompting
+                    </option>
+
+                    <option value="few-shot">
+                        Few-Shot Prompting
+                    </option>
+
+                    <option value="role-based">
+                        Role-Based Prompting
+                    </option>
+
+                    <option value="structured-reasoning">
+                        Structured Reasoning
+                    </option>
+                </select>
+            </div>
+
+            <div class="technique-description">
+                <span id="techniqueBadge">Zero-Shot</span>
+
+                <p id="techniqueDescription">
+                    The AI answers the question directly without being given examples.
+                </p>
+            </div>
+        </section>
+
+        <section class="configuration-panel">
+            <div class="configuration-heading">
+                <div>
+                    <h2>Current AI Configuration</h2>
+                    <p>The chatbot prompt changes dynamically using these settings.</p>
+                </div>
+
+                <button id="viewPromptButton" class="view-prompt-button" type="button">
+                    👁 View Final Prompt
+                </button>
+            </div>
+
+            <div class="configuration-grid">
+                <div class="configuration-item">
+                    <span class="configuration-icon">👤</span>
+
+                    <div>
+                        <small>Selected Role</small>
+                        <strong id="currentRole">Student Assistant</strong>
+                    </div>
+                </div>
+
+                <div class="configuration-item">
+                    <span class="configuration-icon">🧠</span>
+
+                    <div>
+                        <small>Prompt Technique</small>
+                        <strong id="currentTechnique">Zero-Shot Prompting</strong>
+                    </div>
+                </div>
+
+                <div class="configuration-item">
+                    <span class="configuration-icon">🤖</span>
+
+                    <div>
+                        <small>AI Model</small>
+                        <strong>Gemini</strong>
+                    </div>
+                </div>
+
+                <div class="configuration-item">
+                    <span class="configuration-icon">📄</span>
+
+                    <div>
+                        <small>Output Format</small>
+                        <strong>Markdown</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chatMessages" class="chat-messages">
+
+            <div class="message bot-message">
+                <div class="message-avatar">EA</div>
+
+                <div class="message-content welcome-message">
+                    <p>Hello! I am EduAssist, your AI student support chatbot.</p>
+                    <p>
+                        Ask me about academic topics, viva questions, programming,
+                        assignments or study plans.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="suggestions">
+            <button class="suggestion-button">
+                Explain cloud computing
+            </button>
+
+            <button class="suggestion-button">
+                Generate IoT viva questions
+            </button>
+
+            <button class="suggestion-button">
+                Create a study timetable
+            </button>
+        </section>
+
+        <div id="aboutModal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div>
+                        <h2>About EduAssist AI</h2>
+                        <p>Smart Prompt Engineering Chatbot</p>
+                    </div>
+
+                    <button id="closeAboutButton" class="modal-close-button" type="button"
+                        aria-label="Close about window">
+                        ×
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="about-logo">EA</div>
+
+                    <h3>EduAssist AI</h3>
+                    <p class="version-text">Version 1.0</p>
+
+                    <div class="about-details">
+                        <div>
+                            <span>Developed by</span>
+                            <strong>Ayush Kumar Senapati</strong>
+                        </div>
+
+                        <div>
+                            <span>Subject</span>
+                            <strong>Prompt Engineering using ChatGPT</strong>
+                        </div>
+
+                        <div>
+                            <span>Programme</span>
+                            <strong>B.Tech Computer Science and Engineering</strong>
+                        </div>
+
+                        <div>
+                            <span>Technology Stack</span>
+                            <strong>
+                                HTML, CSS, JavaScript, Node.js, Express and Gemini API
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="closeAboutFooterButton" class="primary-modal-button" type="button">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="promptModal" class="modal-overlay hidden">
+            <div class="modal-card prompt-modal-card">
+                <div class="modal-header">
+                    <div>
+                        <h2>Final Engineered Prompt</h2>
+
+                        <p>
+                            Preview of the instructions combined before sending the request.
+                        </p>
+                    </div>
+
+                    <button id="closePromptButton" class="modal-close-button" type="button"
+                        aria-label="Close prompt window">
+                        ×
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="prompt-preview-section">
+                        <span>Selected Role</span>
+                        <strong id="promptPreviewRole">Student Assistant</strong>
+                    </div>
+
+                    <div class="prompt-preview-section">
+                        <span>Prompt Technique</span>
+                        <strong id="promptPreviewTechnique">
+                            Zero-Shot Prompting
+                        </strong>
+                    </div>
+
+                    <div class="prompt-preview-section">
+                        <span>User Request</span>
+
+                        <p id="promptPreviewQuestion">
+                            Enter a question to preview the complete engineered prompt.
+                        </p>
+                    </div>
+
+                    <div class="final-prompt-container">
+                        <div class="final-prompt-heading">
+                            <span>Prompt Preview</span>
+
+                            <button id="copyPromptButton" class="copy-prompt-button" type="button">
+                                📋 Copy Prompt
+                            </button>
+                        </div>
+
+                        <pre id="finalPromptPreview"></pre>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="closePromptFooterButton" class="primary-modal-button" type="button">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <form id="chatForm" class="chat-input-area">
+
+            <textarea id="userInput" placeholder="Type your question here..." rows="1" maxlength="4000"
+                required></textarea>
+
+            <button id="sendButton" type="submit">
+                Send
+            </button>
+
+        </form>
+
+        <footer class="footer-note">
+            <strong>Developed by Ayush Kumar Senapati</strong>
+            <span>B.Tech CSE</span>
+            <span>Prompt Engineering using ChatGPT</span>
+            <span>Powered by Gemini AI</span>
+        </footer>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

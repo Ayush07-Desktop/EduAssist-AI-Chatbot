@@ -374,13 +374,15 @@ ${cleanedMessage}
 });
 
 /* --------------------------------------------------
-   Local server
+   Local server (Only runs when not in Vercel serverless)
 -------------------------------------------------- */
 
-app.listen(PORT, () => {
-  console.log(
-    `EduAssist is running at http://localhost:${PORT}`
-  );
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(
+      `EduAssist is running at http://localhost:${PORT}`
+    );
+  });
+}
 
 export default app;

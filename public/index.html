@@ -3,313 +3,267 @@
 
 <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>EduAssist Chatbot</title>
-
+    <title>EduAssist AI — Professional Educational Assistant</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <main class="chatbot-container">
+    <div class="app-layout">
+        <!-- Sidebar Backdrop for Mobile -->
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-        <header class="chatbot-header">
-            <div class="brand-section">
-                <div class="logo">EA</div>
-
-                <div class="brand-text">
-                    <h1>EduAssist AI</h1>
-                    <p>Smart Prompt Engineering Chatbot</p>
-
-                    <small>
-                        Powered by Gemini AI • Role Prompting • Few-Shot Learning
-                    </small>
+        <!-- Left Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">EduAssist<span class="brand-badge">AI</span></span>
+                        <span class="brand-sub">Smart Learning Suite</span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="header-actions">
-                <button id="aboutButton" class="header-button" type="button">
-                    About
-                </button>
-
-                <button id="clearButton" class="header-button" type="button">
-                    Clear Chat
-                </button>
-            </div>
-        </header>
-
-        <section class="prompt-controls">
-            <div class="control-group">
-                <label for="roleSelector">
-                    Chatbot Role
-                </label>
-
-                <select id="roleSelector">
-                    <option value="student">🎓 Student Assistant</option>
-                    <option value="teacher">👨‍🏫 Teacher</option>
-                    <option value="programmer">💻 Programmer</option>
-                    <option value="interviewer">💼 HR Interviewer</option>
-                    <option value="cloud">☁️ Cloud Engineer</option>
-                    <option value="assignment">📝 Assignment Assistant</option>
-                </select>
-            </div>
-
-            <div class="control-group">
-                <label for="techniqueSelector">
-                    Prompt Technique
-                </label>
-
-                <select id="techniqueSelector">
-                    <option value="zero-shot">
-                        Zero-Shot Prompting
-                    </option>
-
-                    <option value="one-shot">
-                        One-Shot Prompting
-                    </option>
-
-                    <option value="few-shot">
-                        Few-Shot Prompting
-                    </option>
-
-                    <option value="role-based">
-                        Role-Based Prompting
-                    </option>
-
-                    <option value="structured-reasoning">
-                        Structured Reasoning
-                    </option>
-                </select>
-            </div>
-
-            <div class="technique-description">
-                <span id="techniqueBadge">Zero-Shot</span>
-
-                <p id="techniqueDescription">
-                    The AI answers the question directly without being given examples.
-                </p>
-            </div>
-        </section>
-
-        <section class="configuration-panel">
-            <div class="configuration-heading">
-                <div>
-                    <h2>Current AI Configuration</h2>
-                    <p>The chatbot prompt changes dynamically using these settings.</p>
-                </div>
-
-                <button id="viewPromptButton" class="view-prompt-button" type="button">
-                    👁 View Final Prompt
+                <button id="newChatButton" class="new-chat-btn" type="button" title="Start New Chat">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New Session</span>
                 </button>
             </div>
 
-            <div class="configuration-grid">
-                <div class="configuration-item">
-                    <span class="configuration-icon">👤</span>
+            <div class="sidebar-scroll">
+                <!-- Configuration Section -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Persona & Technique</h3>
+                    
+                    <div class="sidebar-group">
+                        <label for="roleSelector">Assistant Role</label>
+                        <div class="select-wrapper">
+                            <select id="roleSelector" class="sidebar-select">
+                                <option value="student">🎓 Student Assistant</option>
+                                <option value="teacher">👨‍🏫 Academic Mentor</option>
+                                <option value="programmer">💻 Senior Developer</option>
+                                <option value="interviewer">💼 Technical Interviewer</option>
+                                <option value="cloud">☁️ Cloud Solutions Architect</option>
+                                <option value="assignment">📝 Assignment Evaluator</option>
+                            </select>
+                        </div>
+                    </div>
 
-                    <div>
-                        <small>Selected Role</small>
-                        <strong id="currentRole">Student Assistant</strong>
+                    <div class="sidebar-group">
+                        <label for="techniqueSelector">Prompt Technique</label>
+                        <div class="select-wrapper">
+                            <select id="techniqueSelector" class="sidebar-select">
+                                <option value="zero-shot">⚡ Zero-Shot Prompting</option>
+                                <option value="one-shot">🎯 One-Shot Prompting</option>
+                                <option value="few-shot">📚 Few-Shot Prompting</option>
+                                <option value="role-based">🎭 Role-Based Persona</option>
+                                <option value="structured-reasoning">🧩 Step-by-Step Reasoning</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div class="configuration-item">
-                    <span class="configuration-icon">🧠</span>
-
-                    <div>
-                        <small>Prompt Technique</small>
-                        <strong id="currentTechnique">Zero-Shot Prompting</strong>
+                <!-- Technique Details Section -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Engine Insights</h3>
+                    <div class="technique-box">
+                        <div class="technique-header">
+                            <span id="techniqueBadge" class="badge">Zero-Shot</span>
+                            <span class="active-dot" title="Engine Active"></span>
+                        </div>
+                        <p id="techniqueDescription">The AI answers directly using base instructions without requiring preliminary samples.</p>
                     </div>
                 </div>
 
-                <div class="configuration-item">
-                    <span class="configuration-icon">🤖</span>
-
-                    <div>
-                        <small>AI Model</small>
-                        <strong>Gemini</strong>
-                    </div>
-                </div>
-
-                <div class="configuration-item">
-                    <span class="configuration-icon">📄</span>
-
-                    <div>
-                        <small>Output Format</small>
-                        <strong>Markdown</strong>
+                <!-- Active Configuration Summary -->
+                <div class="sidebar-section">
+                    <h3 class="section-title">Active Environment</h3>
+                    <div class="config-summary">
+                        <div class="config-row">
+                            <span class="config-label">Role</span>
+                            <strong id="currentRole" class="config-value">Student Assistant</strong>
+                        </div>
+                        <div class="config-row">
+                            <span class="config-label">Strategy</span>
+                            <strong id="currentTechnique" class="config-value">Zero-Shot Prompting</strong>
+                        </div>
+                        <div class="config-row">
+                            <span class="config-label">AI Engine</span>
+                            <span class="config-value highlight">Gemini 3.1 Flash</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <section id="chatMessages" class="chat-messages">
+            <!-- Sidebar Footer Actions -->
+            <div class="sidebar-footer">
+                <button id="viewPromptButton" class="sidebar-btn" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>View System Prompt</span>
+                </button>
+                <button id="aboutButton" class="sidebar-btn" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>About System</span>
+                </button>
+                <button id="clearButton" class="sidebar-btn danger" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span>Clear Conversation</span>
+                </button>
+            </div>
+        </aside>
 
-            <div class="message bot-message">
-                <div class="message-avatar">EA</div>
-
-                <div class="message-content welcome-message">
-                    <p>Hello! I am EduAssist, your AI student support chatbot.</p>
-                    <p>
-                        Ask me about academic topics, viva questions, programming,
-                        assignments or study plans.
-                    </p>
+        <!-- Main Workspace -->
+        <main class="main-workspace">
+            <!-- Top App Bar -->
+            <header class="top-bar">
+                <button id="sidebarToggle" class="mobile-toggle-btn" type="button" aria-label="Toggle Navigation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="top-title">
+                    <h2>EduAssist AI</h2>
+                    <span class="status-indicator">
+                        <span class="status-ping"></span>
+                        <span class="status-text">Gemini 3.1 Live</span>
+                    </span>
                 </div>
+            </header>
 
+            <!-- Chat Scroll Area -->
+            <div class="chat-viewport">
+                <section id="chatMessages" class="chat-thread">
+                    <div class="welcome-hero">
+                        <div class="hero-logo-glow">
+                            <div class="hero-logo">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h2>How can I accelerate your learning today?</h2>
+                        <p class="hero-subtitle">Smart prompt-engineered intelligence designed for academic excellence, code evaluation, and concept mastery.</p>
+                    </div>
+                </section>
             </div>
 
-        </section>
+            <!-- Bottom Floating Prompt Area -->
+            <div class="composer-container">
+                <!-- Suggestion Chips -->
+                <div id="suggestions" class="suggestions-row">
+                    <button class="suggestion-button" type="button">🎓 Explain Cloud Architecture</button>
+                    <button class="suggestion-button" type="button">💡 Generate IoT Viva Questions</button>
+                    <button class="suggestion-button" type="button">💻 Python Code Explainer</button>
+                    <button class="suggestion-button" type="button">📝 Create 7-Day Study Plan</button>
+                </div>
 
-        <section class="suggestions">
-            <button class="suggestion-button">
-                Explain cloud computing
-            </button>
-
-            <button class="suggestion-button">
-                Generate IoT viva questions
-            </button>
-
-            <button class="suggestion-button">
-                Create a study timetable
-            </button>
-        </section>
-
-        <div id="aboutModal" class="modal-overlay hidden">
-            <div class="modal-card">
-                <div class="modal-header">
-                    <div>
-                        <h2>About EduAssist AI</h2>
-                        <p>Smart Prompt Engineering Chatbot</p>
-                    </div>
-
-                    <button id="closeAboutButton" class="modal-close-button" type="button"
-                        aria-label="Close about window">
-                        ×
+                <form id="chatForm" class="composer-form">
+                    <textarea id="userInput" placeholder="Ask EduAssist anything..." rows="1" maxlength="4000" required></textarea>
+                    <button id="sendButton" type="submit" aria-label="Send message">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
                     </button>
-                </div>
+                </form>
+                <div class="composer-footer">Powered by Google Gemini 3.1 • EduAssist AI may generate simplified notes for study purposes.</div>
+            </div>
+        </main>
+    </div>
 
-                <div class="modal-body">
-                    <div class="about-logo">EA</div>
-
-                    <h3>EduAssist AI</h3>
-                    <p class="version-text">Version 1.0</p>
-
-                    <div class="about-details">
-                        <div>
-                            <span>Developed by</span>
-                            <strong>Ayush Kumar Senapati</strong>
-                        </div>
-
-                        <div>
-                            <span>Subject</span>
-                            <strong>Prompt Engineering using ChatGPT</strong>
-                        </div>
-
-                        <div>
-                            <span>Programme</span>
-                            <strong>B.Tech Computer Science and Engineering</strong>
-                        </div>
-
-                        <div>
-                            <span>Technology Stack</span>
-                            <strong>
-                                HTML, CSS, JavaScript, Node.js, Express and Gemini API
-                            </strong>
-                        </div>
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal-backdrop hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>About EduAssist AI</h3>
+                <button id="closeAboutButton" class="modal-close" type="button" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="about-hero">
+                    <div class="about-logo">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                            <path d="M2 17l10 5 10-5"></path>
+                            <path d="M2 12l10 5 10-5"></path>
+                        </svg>
                     </div>
+                    <h4>EduAssist AI</h4>
+                    <span class="version-tag">v2.0 Professional Suite</span>
                 </div>
-
-                <div class="modal-footer">
-                    <button id="closeAboutFooterButton" class="primary-modal-button" type="button">
-                        Close
-                    </button>
+                <div class="about-grid">
+                    <div class="info-card"><span>Developer</span><strong>Ayush Kumar Senapati</strong></div>
+                    <div class="info-card"><span>Domain</span><strong>Prompt Engineering Practical</strong></div>
+                    <div class="info-card"><span>Degree</span><strong>B.Tech Computer Science</strong></div>
+                    <div class="info-card"><span>Engine</span><strong>Google Gemini 3.1 Flash</strong></div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button id="closeAboutFooterButton" class="modal-btn-primary" type="button">Close</button>
             </div>
         </div>
+    </div>
 
-        <div id="promptModal" class="modal-overlay hidden">
-            <div class="modal-card prompt-modal-card">
-                <div class="modal-header">
-                    <div>
-                        <h2>Final Engineered Prompt</h2>
-
-                        <p>
-                            Preview of the instructions combined before sending the request.
-                        </p>
-                    </div>
-
-                    <button id="closePromptButton" class="modal-close-button" type="button"
-                        aria-label="Close prompt window">
-                        ×
-                    </button>
+    <!-- Prompt Preview Modal -->
+    <div id="promptModal" class="modal-backdrop hidden">
+        <div class="modal-box large">
+            <div class="modal-header">
+                <h3>Engineered System Prompt</h3>
+                <button id="closePromptButton" class="modal-close" type="button" aria-label="Close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-meta">
+                    <div class="meta-chip"><span>Role:</span> <strong id="promptPreviewRole">Student Assistant</strong></div>
+                    <div class="meta-chip"><span>Technique:</span> <strong id="promptPreviewTechnique">Zero-Shot Prompting</strong></div>
                 </div>
-
-                <div class="modal-body">
-                    <div class="prompt-preview-section">
-                        <span>Selected Role</span>
-                        <strong id="promptPreviewRole">Student Assistant</strong>
-                    </div>
-
-                    <div class="prompt-preview-section">
-                        <span>Prompt Technique</span>
-                        <strong id="promptPreviewTechnique">
-                            Zero-Shot Prompting
-                        </strong>
-                    </div>
-
-                    <div class="prompt-preview-section">
-                        <span>User Request</span>
-
-                        <p id="promptPreviewQuestion">
-                            Enter a question to preview the complete engineered prompt.
-                        </p>
-                    </div>
-
-                    <div class="final-prompt-container">
-                        <div class="final-prompt-heading">
-                            <span>Prompt Preview</span>
-
-                            <button id="copyPromptButton" class="copy-prompt-button" type="button">
-                                📋 Copy Prompt
-                            </button>
-                        </div>
-
-                        <pre id="finalPromptPreview"></pre>
-                    </div>
+                <div class="preview-question">
+                    <span>User Request Context:</span>
+                    <p id="promptPreviewQuestion">Enter a query to view the dynamically compiled system prompt.</p>
                 </div>
-
-                <div class="modal-footer">
-                    <button id="closePromptFooterButton" class="primary-modal-button" type="button">
-                        Close
-                    </button>
+                <div class="prompt-code-wrapper">
+                    <div class="prompt-code-header">
+                        <span>Compiled Instructions</span>
+                        <button id="copyPromptButton" class="copy-btn" type="button">📋 Copy Prompt</button>
+                    </div>
+                    <pre id="finalPromptPreview"></pre>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button id="closePromptFooterButton" class="modal-btn-primary" type="button">Close</button>
+            </div>
         </div>
-
-        <form id="chatForm" class="chat-input-area">
-
-            <textarea id="userInput" placeholder="Type your question here..." rows="1" maxlength="4000"
-                required></textarea>
-
-            <button id="sendButton" type="submit">
-                Send
-            </button>
-
-        </form>
-
-        <footer class="footer-note">
-            <strong>Developed by Ayush Kumar Senapati</strong>
-            <span>B.Tech CSE</span>
-            <span>Prompt Engineering using ChatGPT</span>
-            <span>Powered by Gemini AI</span>
-        </footer>
-
-    </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="script.js"></script>
-
 </body>
 
 </html>

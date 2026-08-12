@@ -35,12 +35,8 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 /* --------------------------------------------------
-   Gemini client
+   Gemini client is created dynamically per request in /api/chat
 -------------------------------------------------- */
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
 
 /* --------------------------------------------------
    Role prompts
@@ -294,15 +290,36 @@ USER REQUEST:
 ${cleanedMessage}
 `.trim();
 
-    const interaction =
-      await ai.interactions.create({
-        model: "gemini-3.6-flash",
-        input: finalPrompt,
-        store: false,
-      });
+    const ai = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY,
+    });
 
-    const reply =
-      interaction.output_text?.trim();
+    let response;
+    const modelsToTry = [
+      "gemini-3.1-flash-lite",
+      "gemini-2.5-flash-lite",
+      "gemini-2.0-flash",
+      "gemini-2.5-flash",
+    ];
+
+    let lastError = null;
+    for (const modelName of modelsToTry) {
+      try {
+        response = await ai.models.generateContent({
+          model: modelName,
+          contents: finalPrompt,
+        });
+        if (response && response.text) break;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    if (!response || !response.text) {
+      throw lastError || new Error("Failed to generate response from Gemini API.");
+    }
+
+    const reply = response.text?.trim();
 
     if (!reply) {
       throw new Error(
@@ -319,6 +336,7 @@ ${cleanedMessage}
 
     const rawError =
       error?.message ||
+      JSON.stringify(error) ||
       "Unknown Gemini API error.";
 
     let userMessage =
@@ -326,10 +344,15 @@ ${cleanedMessage}
 
     if (
       rawError.includes("401") ||
-      rawError.toLowerCase().includes("unauthenticated")
+      rawError.includes("404") ||
+      rawError.includes("400") ||
+      rawError.toLowerCase().includes("unauthenticated") ||
+      rawError.toLowerCase().includes("api_key") ||
+      rawError.toLowerCase().includes("not_found") ||
+      rawError.toLowerCase().includes("invalid")
     ) {
       userMessage =
-        "Gemini authentication failed. Check the GEMINI_API_KEY environment variable.";
+        "Gemini API request failed. Please check that GEMINI_API_KEY in your .env file is a valid API key from Google AI Studio (https://aistudio.google.com/).";
     } else if (
       rawError.includes("429") ||
       rawError.toLowerCase().includes("quota")

@@ -57,15 +57,54 @@ const promptPreviewTechnique =
 const promptPreviewQuestion =
   document.getElementById("promptPreviewQuestion");
 
-/* Configuration panel elements */
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const newChatButton = document.getElementById("newChatButton");
 
-const currentRole =
-  document.getElementById("currentRole");
+if (sidebarToggle && sidebar && sidebarOverlay) {
+  const toggleSidebar = () => {
+    sidebar.classList.toggle("open");
+    sidebarOverlay.classList.toggle("active");
+  };
 
-const currentTechnique =
-  document.getElementById("currentTechnique");
+  sidebarToggle.addEventListener("click", toggleSidebar);
+  sidebarOverlay.addEventListener("click", toggleSidebar);
+}
 
-let lastUserMessage = "";
+if (newChatButton) {
+  newChatButton.addEventListener("click", () => {
+    chatMessages.innerHTML = `
+      <div class="welcome-hero">
+          <div class="hero-logo-glow">
+              <div class="hero-logo">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                      <path d="M2 17l10 5 10-5"></path>
+                      <path d="M2 12l10 5 10-5"></path>
+                  </svg>
+              </div>
+          </div>
+          <h2>How can I accelerate your learning today?</h2>
+      </div>
+    `;
+
+    const suggestionsRow = document.getElementById("suggestions");
+    if (suggestionsRow) {
+      suggestionsRow.style.display = "flex";
+    }
+
+    lastUserMessage = "";
+    userInput.value = "";
+    resetInputHeight();
+    userInput.focus();
+
+    if (window.innerWidth <= 768 && sidebar.classList.contains("open")) {
+      sidebar.classList.remove("open");
+      sidebarOverlay.classList.remove("active");
+    }
+  });
+}
 
 const techniqueInformation = {
   "zero-shot": {
@@ -226,8 +265,22 @@ function createMessageElement(sender) {
 
   avatarElement.className = "message-avatar";
 
-  avatarElement.textContent =
-    sender === "user" ? "You" : "EA";
+  if (sender === "user") {
+    avatarElement.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    `;
+  } else {
+    avatarElement.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    `;
+  }
 
   const wrapperElement =
     document.createElement("div");
@@ -619,6 +672,16 @@ function setChatControlsDisabled(
 
 async function sendMessage(message) {
   lastUserMessage = message;
+
+  const welcomeHero = chatMessages.querySelector(".welcome-hero");
+  if (welcomeHero) {
+    welcomeHero.remove();
+  }
+
+  const suggestionsRow = document.getElementById("suggestions");
+  if (suggestionsRow) {
+    suggestionsRow.style.display = "none";
+  }
 
   const selectedRole =
     roleSelector.value;

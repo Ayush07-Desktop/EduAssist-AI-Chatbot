@@ -1,245 +1,158 @@
-# EduAssist AI
+<div align="center">
 
-**EduAssist AI** is a smart Prompt Engineering chatbot built for academic learning and practical demonstration. It allows users to select different chatbot roles and prompting techniques, then generates structured AI responses using the Google Gemini API.
+# 🎓 EduAssist AI — Smart Educational Assistant
 
-## Live Demo
+**A Prompt Engineering Educational Platform Powered by Google Gemini 3.1**
 
-Deployment link will be added after hosting the application on Render.
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg?style=for-the-badge&logo=node.js)](https://nodejs.org/)
+[![Google Gemini API](https://img.shields.io/badge/Google_Gemini-3.1_Flash-886FBF?style=for-the-badge&logo=google)](https://ai.google.dev/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.x-000000.svg?style=for-the-badge&logo=express)](https://expressjs.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-## Project Overview
+</div>
 
-EduAssist AI demonstrates how prompt engineering can control the behavior, tone, structure, and quality of AI-generated responses.
+---
 
-The application dynamically combines:
+## 🌟 Overview
 
-- Selected chatbot role
-- Selected prompt engineering technique
-- System instructions
-- User request
+**EduAssist AI** is a state-of-the-art educational chatbot and prompt engineering platform designed for students, developers, and educators. It combines dynamic persona switching with Advanced Prompt Engineering techniques (Zero-Shot, One-Shot, Few-Shot, Role-Based, and Step-by-Step Reasoning) to generate tailored academic responses using Google's **Gemini 3.1 Flash API**.
 
-The final engineered prompt is then sent to the Gemini API for response generation.
+Built with an ultra-sleek **Electric Indigo & Dark Obsidian Slate** glassmorphic interface, EduAssist AI delivers a smooth user experience across desktop and mobile devices.
 
-## Key Features
+---
 
-- AI-powered educational chatbot
-- Google Gemini API integration
-- Role-based prompting
-- Zero-shot, one-shot, and few-shot prompting
-- Structured reasoning
-- Dynamic prompt preview
-- Markdown-formatted responses
-- Copy AI response
-- Export AI response as PDF
-- Response generation time
-- Suggested prompt buttons
-- Clear chat option
-- About project modal
-- Responsive user interface
-- Secure API key handling using environment variables
+## ✨ Key Features
 
-## Chatbot Roles
+- 🎓 **Dynamic Persona Selector**: Switch seamlessly between 6 customized assistant personas:
+  - `Student Assistant` — Concise explanations with study tips and viva prep.
+  - `Academic Mentor` — In-depth academic breakdowns with references.
+  - `Senior Developer` — Production-grade code snippets with complexity analysis.
+  - `Technical Interviewer` — Interactive mock technical interview questions.
+  - `Cloud Solutions Architect` — System design and cloud architecture guidance.
+  - `Assignment Evaluator` — Rubric-based assignment reviews and feedback.
 
-- Student Assistant
-- Teacher
-- Programmer
-- HR Interviewer
-- Cloud Engineer
-- Assignment Assistant
+- ⚡ **Prompt Engineering Engine**: Test and inspect 5 core prompt techniques:
+  - **Zero-Shot Prompting**: Direct task execution without prior examples.
+  - **One-Shot Prompting**: Guided generation using a single reference sample.
+  - **Few-Shot Prompting**: Pattern-matching generation using multi-sample pairs.
+  - **Role-Based Persona**: Domain-specific tone and instruction tuning.
+  - **Step-by-Step Reasoning**: Chain-of-thought breakdown for complex queries.
 
-## Prompt Engineering Techniques
+- 🔍 **Live System Prompt Inspection**: View and copy the compiled system prompt before or after sending queries.
+- 🎨 **Modern Glassmorphic UI**: High-end Obsidian Slate theme (`#090D16`), vibrant Electric Indigo gradients (`#6366F1`), and smooth micro-animations.
+- 📄 **Export & Utility Tools**:
+  - One-click **PDF Export** of formatted AI responses.
+  - Response generation **latency benchmark** in seconds.
+  - Rich **Markdown rendering** (tables, headings, syntax-highlighted code blocks).
+  - Copy response text to clipboard.
+- 📱 **Mobile-Responsive Drawer**: Fully responsive sidebar overlay for smaller screens.
 
-### Zero-Shot Prompting
-The AI answers directly without receiving any examples.
+---
 
-### One-Shot Prompting
-The AI receives one example before answering the user's request.
+## 🛠️ Technology Stack
 
-### Few-Shot Prompting
-The AI receives multiple examples to understand the expected response pattern.
+| Layer | Technology |
+|---|---|
+| **Frontend** | HTML5, CSS3 (Vanilla Glassmorphism), JavaScript (ES6+), Marked.js, jsPDF |
+| **Backend** | Node.js, Express.js, CORS, Dotenv |
+| **AI Integration** | `@google/genai` (Google Gen AI SDK v2.15.0) |
+| **Models Supported** | `gemini-3.1-flash-lite`, `gemini-2.5-flash-lite`, `gemini-2.0-flash` |
+| **Typography** | `Plus Jakarta Sans` (UI text), `JetBrains Mono` (Code blocks) |
 
-### Role-Based Prompting
-The AI behaves according to the selected professional or educational role.
+---
 
-### Structured Reasoning
-The AI provides a clear and organized step-by-step explanation.
-
-## Technology Stack
-
-### Frontend
-- HTML5
-- CSS3
-- JavaScript
-- Marked.js
-- jsPDF
-
-### Backend
-- Node.js
-- Express.js
-
-### AI Integration
-- Google Gemini API
-- Google Gen AI JavaScript SDK
-
-### Development Tools
-- Visual Studio Code
-- Git
-- GitHub
-- Render
-
-## Project Structure
+## 📁 Project Structure
 
 ```text
 EduAssist-AI-Chatbot/
-│
 ├── public/
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
-│
-├── .env
-├── .gitignore
-├── package.json
-├── package-lock.json
-├── server.js
-└── README.md
+│   ├── index.html        # Glassmorphic layout & SVG icon markup
+│   ├── style.css         # CSS design system (Variables, Glassmorphism, Animations)
+│   └── script.js         # Frontend controller, API handler, Marked.js & PDF exporter
+├── server.js             # Express API server with dynamic Gemini model fallback
+├── .env                  # Environment variables (API Key & Port)
+├── .gitignore            # Protects .env and node_modules from git
+├── package.json          # Dependencies and scripts
+└── README.md             # Project documentation
 ```
 
-## Installation and Setup
+---
 
-### 1. Clone the repository
+## 🚀 Quick Start Guide
 
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
+- A Google Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+
+### 1. Clone Repository
 ```bash
 git clone https://github.com/Ayush07-Desktop/EduAssist-AI-Chatbot.git
-```
-
-### 2. Open the project folder
-
-```bash
 cd EduAssist-AI-Chatbot
 ```
 
-### 3. Install dependencies
-
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### 4. Create a `.env` file
-
+### 3. Configure Environment Variables
+Create a `.env` file in the root directory:
 ```env
-GEMINI_API_KEY=your_gemini_api_key
+GEMINI_API_KEY=your_google_gemini_api_key_here
 PORT=5000
 ```
 
-Do not upload the `.env` file to GitHub.
+> [!IMPORTANT]
+> Never commit your `.env` file to version control. The repository includes a `.gitignore` file to safeguard your secret API key.
 
-### 5. Start the server
-
+### 4. Run Development Server
 ```bash
+npm run dev
+# or
 npm start
 ```
 
-### 6. Open the application
-
+### 5. Access the Application
+Open your browser and navigate to:
 ```text
 http://localhost:5000
 ```
 
-## Environment Variables
+---
 
-| Variable | Description |
-|---|---|
-| `GEMINI_API_KEY` | Gemini API key from Google AI Studio |
-| `PORT` | Local server port, default `5000` |
+## 💡 Example Prompt Scenarios
 
-## Example Prompts
+| Category | Example Query | Recommended Role |
+|---|---|---|
+| **Cloud Computing** | *"Explain Cloud Architecture and compare IaaS vs PaaS."* | `Cloud Architect` |
+| **Exam Preparation** | *"Generate 5 viva questions with answers on IoT protocols."* | `Student Assistant` |
+| **Coding & Algorithms**| *"Explain QuickSort algorithm with JavaScript code and O(n) complexity."* | `Senior Developer` |
+| **Study Management** | *"Create a structured 7-day study plan for Operating Systems."* | `Academic Mentor` |
 
-```text
-Explain cloud computing in simple words.
-```
+---
 
-```text
-Generate five IoT viva questions with answers.
-```
+## 🔒 Security & Best Practices
 
-```text
-Create a two-hour JavaScript study timetable.
-```
+- **Server-Side API Calls**: All interactions with Google Gemini API occur securely on the backend server (`server.js`). The API key is never exposed to client-side scripts.
+- **Model Fallback Chain**: Server dynamically negotiates available endpoints (`gemini-3.1-flash-lite` -> `gemini-2.5-flash-lite` -> `gemini-2.0-flash`) ensuring reliable uptime.
+- **Error Handling**: Graceful error handling prevents internal stack traces from leaking to the frontend.
 
-```text
-Start a mock interview for a cloud engineer role.
-```
+---
 
-```text
-Compare IaaS, PaaS, and SaaS using a table.
-```
+## 👨‍💻 Author
 
-## How Prompt Engineering Is Implemented
+**Ayush Kumar Senapati**  
+*B.Tech in Computer Science and Engineering*  
+Centurion University of Technology and Management, Bhubaneswar, Odisha  
 
-The frontend sends the user's message, selected role, and selected prompting technique to the backend.
+---
 
-The backend selects the correct role prompt and technique prompt, combines them with the user request, and sends the final engineered prompt to Gemini.
+## 📄 License
 
-This allows the same user question to produce different responses depending on the selected settings.
+Distributed under the MIT License. See `LICENSE` for more details.
 
-## API Security
+---
 
-The Gemini API key is stored inside the `.env` file and is not exposed in frontend JavaScript.
-
-The `.gitignore` file contains:
-
-```gitignore
-node_modules/
-.env
-```
-
-## Deployment
-
-The application can be deployed as a Node.js Web Service on Render.
-
-Recommended settings:
-
-```text
-Build Command: npm install
-Start Command: npm start
-```
-
-Add this environment variable in Render:
-
-```text
-GEMINI_API_KEY=your_actual_gemini_api_key
-```
-
-## Academic Purpose
-
-This project was developed for the subject:
-
-**Prompt Engineering using ChatGPT**
-
-Experiments demonstrated:
-
-- Designing prompts for chatbots
-- Developing prompts for virtual assistants
-
-## Future Improvements
-
-- Dark and light mode
-- Chat history
-- Voice input
-- Text-to-speech
-- File upload
-- Streaming AI responses
-- User authentication
-- Saved conversations
-
-## Author
-
-**Ayush Kumar Senapati**
-
-B.Tech in Computer Science and Engineering  
-Centurion University of Technology and Management  
-Bhubaneswar, Odisha
-
-## Disclaimer
-
-EduAssist AI may occasionally generate incorrect or incomplete information. Verify important academic, technical, medical, legal, or financial information from reliable sources.
+<div align="center">
+  <sub>Built with ❤️ for academic excellence and prompt engineering research.</sub>
+</div>

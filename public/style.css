@@ -1404,10 +1404,10 @@ html, body {
 }
 
 .pdf-response-body pre {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
   padding: 14px 16px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
   font-size: 11px;
   line-height: 1.5;
@@ -1415,7 +1415,9 @@ html, body {
   margin: 16px 0;
   white-space: pre-wrap;
   word-break: break-word;
-  border: 1px solid #1e293b;
+  border: 1px solid #cbd5e1 !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
 }
 
 .pdf-response-body code {
@@ -1430,9 +1432,9 @@ html, body {
 
 .pdf-response-body pre code {
   background-color: transparent !important;
-  color: inherit !important;
+  color: #0f172a !important;
   padding: 0;
-  font-weight: normal;
+  font-weight: 500;
 }
 
 .pdf-response-body blockquote {
@@ -1442,6 +1444,25 @@ html, body {
   padding: 12px 18px;
   border-radius: 0 8px 8px 0;
   color: #334155 !important;
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+/* Page Break Protection Rules */
+.pdf-prompt-box,
+.pdf-meta-grid,
+.pdf-header,
+.pdf-response-body table,
+.pdf-response-body tr {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+}
+
+.pdf-response-body h1,
+.pdf-response-body h2,
+.pdf-response-body h3 {
+  page-break-after: avoid !important;
+  break-after: avoid !important;
 }
 
 .pdf-footer {

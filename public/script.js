@@ -516,13 +516,13 @@ function downloadResponseAsPDF(
       html2canvas: {
         scale: 2,
         useCORS: true,
-        logging: true,
+        logging: false,
         backgroundColor: "#ffffff",
         scrollX: 0,
         scrollY: 0
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+      pagebreak: { mode: ["css", "legacy"], avoid: [".pdf-prompt-box", ".pdf-meta-grid", ".pdf-header", "tr", "pre", "blockquote"] }
     };
 
     window.html2pdf()

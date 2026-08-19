@@ -430,13 +430,10 @@ function downloadResponseAsPDF(
 
   const pdfContainer = document.createElement("div");
   pdfContainer.className = "pdf-export-template";
-  pdfContainer.style.position = "fixed";
-  pdfContainer.style.left = "0";
+  pdfContainer.style.position = "absolute";
+  pdfContainer.style.left = "-9999px";
   pdfContainer.style.top = "0";
   pdfContainer.style.width = "750px";
-  pdfContainer.style.opacity = "1";
-  pdfContainer.style.pointerEvents = "none";
-  pdfContainer.style.zIndex = "999999";
   pdfContainer.style.backgroundColor = "#ffffff";
 
   pdfContainer.innerHTML = `
@@ -504,17 +501,14 @@ function downloadResponseAsPDF(
 
   if (window.html2pdf) {
     const opt = {
-      margin: [8, 10, 10, 10],
+      margin: [10, 10, 10, 10],
       filename: fileName,
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: "#ffffff",
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: 800
+        backgroundColor: "#ffffff"
       },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] }

@@ -428,18 +428,21 @@ function downloadResponseAsPDF(
     htmlResponse = marked.parse(responseText);
   }
 
+  const offscreenWrapper = document.createElement("div");
+  offscreenWrapper.style.position = "absolute";
+  offscreenWrapper.style.left = "-9999px";
+  offscreenWrapper.style.top = "0";
+  offscreenWrapper.style.width = "750px";
+  offscreenWrapper.style.backgroundColor = "#ffffff";
+
   const pdfContainer = document.createElement("div");
   pdfContainer.id = "pdfExportWrapper";
   pdfContainer.className = "pdf-export-template";
-  pdfContainer.style.position = "fixed";
-  pdfContainer.style.top = "0";
-  pdfContainer.style.left = "0";
+  pdfContainer.style.position = "static";
   pdfContainer.style.width = "750px";
-  pdfContainer.style.zIndex = "9999999";
-  pdfContainer.style.opacity = "1";
-  pdfContainer.style.pointerEvents = "none";
   pdfContainer.style.backgroundColor = "#ffffff";
   pdfContainer.style.color = "#1e293b";
+  pdfContainer.style.boxSizing = "border-box";
 
   pdfContainer.innerHTML = `
     <div class="pdf-header">
@@ -494,7 +497,8 @@ function downloadResponseAsPDF(
     </div>
   `;
 
-  document.body.appendChild(pdfContainer);
+  offscreenWrapper.appendChild(pdfContainer);
+  document.body.appendChild(offscreenWrapper);
 
   const cleanTitle = promptText
     .substring(0, 25)
@@ -526,16 +530,16 @@ function downloadResponseAsPDF(
       .from(pdfContainer)
       .save()
       .then(() => {
-        cleanupPDFExport(pdfContainer, pdfButtonElement);
+        cleanupPDFExport(offscreenWrapper, pdfButtonElement);
       })
       .catch((err) => {
         console.error("html2pdf failed:", err);
         fallbackPDFDownload(responseText, userPrompt, fileName);
-        cleanupPDFExport(pdfContainer, pdfButtonElement);
+        cleanupPDFExport(offscreenWrapper, pdfButtonElement);
       });
   } else {
     fallbackPDFDownload(responseText, userPrompt, fileName);
-    cleanupPDFExport(pdfContainer, pdfButtonElement);
+    cleanupPDFExport(offscreenWrapper, pdfButtonElement);
   }
 }
 

@@ -436,7 +436,7 @@ function downloadResponseAsPDF(
   pdfContainer.style.width = "750px";
   pdfContainer.style.opacity = "1";
   pdfContainer.style.pointerEvents = "none";
-  pdfContainer.style.zIndex = "-999999";
+  pdfContainer.style.zIndex = "999999";
   pdfContainer.style.backgroundColor = "#ffffff";
 
   pdfContainer.innerHTML = `
@@ -507,7 +507,15 @@ function downloadResponseAsPDF(
       margin: [8, 10, 10, 10],
       filename: fileName,
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 800
+      },
       jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       pagebreak: { mode: ["avoid-all", "css", "legacy"] }
     };

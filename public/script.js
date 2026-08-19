@@ -378,7 +378,8 @@ function createResponseActions(
   pdfButton.addEventListener("click", () => {
     downloadResponseAsPDF(
       responseText,
-      userPrompt
+      userPrompt,
+      pdfButton
     );
   });
 
@@ -391,193 +392,185 @@ function createResponseActions(
   wrapperElement.appendChild(actionsElement);
 }
 
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 function downloadResponseAsPDF(
   responseText,
-  userPrompt
+  userPrompt,
+  pdfButtonElement
 ) {
-  if (
-    !window.jspdf ||
-    !window.jspdf.jsPDF
-  ) {
-    alert(
-      "PDF library could not be loaded."
-    );
-    return;
+  if (pdfButtonElement) {
+    pdfButtonElement.disabled = true;
+    pdfButtonElement.textContent = "⏳ Generating...";
   }
 
+  const selectedRole = getSelectedRoleText();
+  const selectedTechnique = getSelectedTechniqueText();
+  const generatedDate = new Date().toLocaleString([], {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  const promptText = userPrompt || lastUserMessage || "General Inquiry";
+
+  let htmlResponse = responseText;
+  if (typeof marked !== "undefined") {
+    htmlResponse = marked.parse(responseText);
+  }
+
+  const pdfContainer = document.createElement("div");
+  pdfContainer.className = "pdf-export-template";
+  pdfContainer.style.position = "absolute";
+  pdfContainer.style.left = "0";
+  pdfContainer.style.top = "0";
+  pdfContainer.style.opacity = "0.01";
+  pdfContainer.style.pointerEvents = "none";
+  pdfContainer.style.zIndex = "-9999";
+
+  pdfContainer.innerHTML = `
+    <div class="pdf-header">
+      <div class="pdf-brand">
+        <div class="pdf-logo-icon">🎓</div>
+        <div>
+          <h1 class="pdf-title">EduAssist AI</h1>
+          <p class="pdf-subtitle">Smart Educational Assistant & Study Notes</p>
+        </div>
+      </div>
+      <div class="pdf-doc-badge">Study Guide</div>
+    </div>
+
+    <div class="pdf-divider"></div>
+
+    <div class="pdf-meta-grid">
+      <div class="pdf-meta-item">
+        <span class="pdf-meta-label">Assistant Role:</span>
+        <span class="pdf-meta-val">${escapeHtml(selectedRole)}</span>
+      </div>
+      <div class="pdf-meta-item">
+        <span class="pdf-meta-label">Prompt Technique:</span>
+        <span class="pdf-meta-val">${escapeHtml(selectedTechnique)}</span>
+      </div>
+      <div class="pdf-meta-item">
+        <span class="pdf-meta-label">Generated Date:</span>
+        <span class="pdf-meta-val">${generatedDate}</span>
+      </div>
+    </div>
+
+    <div class="pdf-prompt-box">
+      <div class="pdf-prompt-header">
+        <span>❓</span>
+        <span>Student Question / Inquiry</span>
+      </div>
+      <div class="pdf-prompt-content">${escapeHtml(promptText)}</div>
+    </div>
+
+    <div class="pdf-response-section">
+      <div class="pdf-section-title">
+        <span>📚</span>
+        <h2>AI Academic Explanation & Notes</h2>
+      </div>
+      <div class="pdf-response-body">
+        ${htmlResponse}
+      </div>
+    </div>
+
+    <div class="pdf-footer">
+      <span>EduAssist AI • Powered by Google Gemini 3.1 • Academic Study Reference</span>
+      <span>EduAssist Learning Suite</span>
+    </div>
+  `;
+
+  document.body.appendChild(pdfContainer);
+
+  const cleanTitle = promptText
+    .substring(0, 25)
+    .replace(/[^a-zA-Z0-9]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+  const fileName = `EduAssist-Study-Note_${cleanTitle || "Response"}.pdf`;
+
+  if (window.html2pdf) {
+    const opt = {
+      margin: [8, 10, 10, 10],
+      filename: fileName,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: "#ffffff" },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["avoid-all", "css", "legacy"] }
+    };
+
+    window.html2pdf()
+      .set(opt)
+      .from(pdfContainer)
+      .save()
+      .then(() => {
+        cleanupPDFExport(pdfContainer, pdfButtonElement);
+      })
+      .catch((err) => {
+        console.error("html2pdf failed:", err);
+        fallbackPDFDownload(responseText, userPrompt, fileName);
+        cleanupPDFExport(pdfContainer, pdfButtonElement);
+      });
+  } else {
+    fallbackPDFDownload(responseText, userPrompt, fileName);
+    cleanupPDFExport(pdfContainer, pdfButtonElement);
+  }
+}
+
+function cleanupPDFExport(container, button) {
+  if (container && container.parentNode) {
+    container.parentNode.removeChild(container);
+  }
+  if (button) {
+    button.disabled = false;
+    button.textContent = "✅ Downloaded";
+    setTimeout(() => {
+      button.textContent = "📄 PDF";
+    }, 2000);
+  }
+}
+
+function fallbackPDFDownload(responseText, userPrompt, fileName) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("PDF generator library could not be loaded.");
+    return;
+  }
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
-
-  const selectedRole =
-    getSelectedRoleText();
-
-  const selectedTechnique =
-    getSelectedTechniqueText();
-
-  const generatedDate =
-    new Date().toLocaleString();
-
-  const pageWidth =
-    pdf.internal.pageSize.getWidth();
-
-  const pageHeight =
-    pdf.internal.pageSize.getHeight();
-
+  const pageWidth = pdf.internal.pageSize.getWidth();
   const margin = 18;
-  const usableWidth =
-    pageWidth - margin * 2;
-
+  const usableWidth = pageWidth - margin * 2;
   let currentY = 20;
 
   pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(19);
-
-  pdf.text(
-    "EduAssist AI",
-    margin,
-    currentY
-  );
-
-  currentY += 8;
-
-  pdf.setFontSize(11);
-  pdf.setFont("helvetica", "normal");
-
-  pdf.text(
-    "Smart Prompt Engineering Chatbot",
-    margin,
-    currentY
-  );
-
-  currentY += 9;
-
-  pdf.setFontSize(9);
-  pdf.text(
-    `Generated on: ${generatedDate}`,
-    margin,
-    currentY
-  );
-
-  currentY += 6;
-
-  pdf.text(
-    `Role: ${selectedRole}`,
-    margin,
-    currentY
-  );
-
-  currentY += 6;
-
-  pdf.text(
-    `Prompt Technique: ${selectedTechnique}`,
-    margin,
-    currentY
-  );
-
+  pdf.setFontSize(18);
+  pdf.text("EduAssist AI - Study Note", margin, currentY);
   currentY += 10;
 
-  pdf.setDrawColor(180);
-  pdf.line(
-    margin,
-    currentY,
-    pageWidth - margin,
-    currentY
-  );
-
-  currentY += 10;
-
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(12);
-
-  pdf.text(
-    "User Prompt",
-    margin,
-    currentY
-  );
-
-  currentY += 7;
-
   pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(11);
-
-  const promptLines =
-    pdf.splitTextToSize(
-      userPrompt ||
-        lastUserMessage ||
-        "Not available",
-      usableWidth
-    );
-
-  promptLines.forEach((line) => {
-    if (
-      currentY >
-      pageHeight - 20
-    ) {
+  pdf.setFontSize(10);
+  const cleanResponse = responseText.replace(/[#*_`|]/g, "").trim();
+  const lines = pdf.splitTextToSize(cleanResponse, usableWidth);
+  lines.forEach((line) => {
+    if (currentY > 270) {
       pdf.addPage();
       currentY = 20;
     }
-
-    pdf.text(
-      line,
-      margin,
-      currentY
-    );
-
+    pdf.text(line, margin, currentY);
     currentY += 6;
   });
-
-  currentY += 6;
-
-  pdf.setFont("helvetica", "bold");
-  pdf.setFontSize(12);
-
-  pdf.text(
-    "AI Response",
-    margin,
-    currentY
-  );
-
-  currentY += 7;
-
-  pdf.setFont("helvetica", "normal");
-  pdf.setFontSize(11);
-
-  const cleanResponse = responseText
-    .replace(/#{1,6}\s?/g, "")
-    .replace(/\*\*/g, "")
-    .replace(/__/g, "")
-    .replace(/`/g, "")
-    .replace(/\|/g, " ")
-    .replace(/---+/g, "")
-    .trim();
-
-  const responseLines =
-    pdf.splitTextToSize(
-      cleanResponse,
-      usableWidth
-    );
-
-  responseLines.forEach((line) => {
-    if (
-      currentY >
-      pageHeight - 20
-    ) {
-      pdf.addPage();
-      currentY = 20;
-    }
-
-    pdf.text(
-      line,
-      margin,
-      currentY
-    );
-
-    currentY += 6;
-  });
-
-  pdf.save(
-    "EduAssist-AI-Response.pdf"
-  );
+  pdf.save(fileName || "EduAssist-AI-Response.pdf");
 }
 
 function addMessage(

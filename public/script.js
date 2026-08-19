@@ -430,12 +430,14 @@ function downloadResponseAsPDF(
 
   const pdfContainer = document.createElement("div");
   pdfContainer.className = "pdf-export-template";
-  pdfContainer.style.position = "absolute";
+  pdfContainer.style.position = "fixed";
   pdfContainer.style.left = "0";
   pdfContainer.style.top = "0";
-  pdfContainer.style.opacity = "0.01";
+  pdfContainer.style.width = "750px";
+  pdfContainer.style.opacity = "1";
   pdfContainer.style.pointerEvents = "none";
-  pdfContainer.style.zIndex = "-9999";
+  pdfContainer.style.zIndex = "-999999";
+  pdfContainer.style.backgroundColor = "#ffffff";
 
   pdfContainer.innerHTML = `
     <div class="pdf-header">

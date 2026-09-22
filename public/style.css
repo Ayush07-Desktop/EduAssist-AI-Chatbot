@@ -54,8 +54,14 @@
   padding: 0;
 }
 
-html, body {
+html {
   height: 100%;
+  height: -webkit-fill-available;
+}
+
+body {
+  height: 100%;
+  height: 100dvh;
   width: 100%;
   background-color: var(--bg-obsidian);
   color: var(--text-primary);
@@ -69,7 +75,8 @@ html, body {
 /* App Layout */
 .app-layout {
   display: flex;
-  height: 100vh;
+  height: 100%;
+  height: 100dvh;
   width: 100vw;
   overflow: hidden;
   position: relative;
@@ -446,9 +453,11 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  height: 100dvh;
   background-color: var(--bg-obsidian);
   position: relative;
   overflow: hidden;
+  min-height: 0;
 }
 
 /* Top App Header */
@@ -1224,6 +1233,7 @@ html, body {
     left: 0;
     transform: translateX(-100%);
     width: 290px;
+    height: 100dvh;
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.6);
   }
   
@@ -1233,7 +1243,7 @@ html, body {
   
   .top-bar {
     padding: 0 14px;
-    height: 58px;
+    height: 54px;
     gap: 10px;
   }
 
@@ -1257,52 +1267,72 @@ html, body {
   }
 
   .chat-viewport {
-    padding: 16px 14px 220px 14px;
+    padding: 12px 14px 175px 14px;
   }
 
   .welcome-hero {
-    margin: 30px 0 10px 0;
-    gap: 12px;
+    margin: 20px 0 8px 0;
+    gap: 10px;
+  }
+
+  .welcome-hero .hero-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
   }
 
   .welcome-hero h2 {
-    font-size: 20px;
-    line-height: 1.35;
+    font-size: 18.5px;
+    line-height: 1.3;
     padding: 0 4px;
   }
 
   .hero-subtitle {
-    font-size: 13.5px;
+    font-size: 13px;
     padding: 0 4px;
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
+  /* Horizontal swipeable suggestions row on mobile */
   .suggestions-row {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
     margin-bottom: 8px;
     width: 100%;
     max-width: 100%;
+    padding: 2px 2px 6px 2px;
+    justify-content: flex-start;
+  }
+
+  .suggestions-row::-webkit-scrollbar {
+    display: none;
   }
 
   .suggestion-button {
+    flex-shrink: 0;
+    white-space: nowrap;
     font-size: 12px;
-    padding: 9px 14px;
-    text-align: center;
-    width: 100%;
-    border-radius: 12px;
+    padding: 7px 14px;
+    border-radius: var(--radius-full);
+    background: var(--bg-surface);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
 
   .composer-container {
-    padding: 0 14px max(14px, env(safe-area-inset-bottom)) 14px;
+    padding: 0 12px max(22px, calc(env(safe-area-inset-bottom) + 14px)) 12px;
+    background: linear-gradient(180deg, rgba(9, 13, 22, 0) 0%, rgba(9, 13, 22, 0.96) 25%, var(--bg-obsidian) 70%);
   }
 
   .composer-form {
     border-radius: 24px;
     padding: 8px 12px 8px 16px;
     gap: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .composer-form textarea {
@@ -1315,9 +1345,9 @@ html, body {
   }
 
   .composer-footer {
-    font-size: 10px;
-    margin-top: 6px;
-    line-height: 1.4;
+    font-size: 9.5px;
+    margin-top: 5px;
+    line-height: 1.3;
   }
 
   .user-message .message-content {
@@ -1367,6 +1397,10 @@ html, body {
 
   .status-ping {
     margin: 0;
+  }
+
+  .welcome-hero h2 {
+    font-size: 17.5px;
   }
 }
 

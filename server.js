@@ -35,8 +35,16 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 /* --------------------------------------------------
-   Gemini client is created dynamically per request in /api/chat
+   Gemini client (reused across requests for lower latency)
 -------------------------------------------------- */
+
+let globalAi = null;
+function getAiClient() {
+  if (!globalAi && process.env.GEMINI_API_KEY) {
+    globalAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+  return globalAi || new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+}
 
 /* --------------------------------------------------
    Role prompts
@@ -279,54 +287,45 @@ ${techniquePrompt}
 
 GENERAL RESPONSE RULES:
 
-1. Answer the user's actual request.
-2. Keep the response accurate and relevant.
-3. Use Markdown headings, lists and tables when helpful.
-4. Use simple language unless the user requests technical detail.
-5. Clearly acknowledge uncertainty instead of inventing facts.
+1. Answer the user's actual request directly and clearly.
+2. Keep the response accurate, helpful and concise.
+3. Use Markdown headings, bullet points and code blocks where helpful.
+4. Use simple language unless the user requests deep technical details.
+5. Avoid unnecessary fluff or redundant repetition.
 
 USER REQUEST:
 
 ${cleanedMessage}
 `.trim();
 
-    const ai = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
-    });
+    const ai = getAiClient();
 
-    let response;
-    const modelsToTry = [
-      "gemini-3.6-flash",
+    // Parallel racing: all models are queried simultaneously; the fastest responding model returns immediately
+    const modelsToRace = [
       "gemini-3.5-flash",
+      "gemini-3.6-flash",
       "gemini-3.7-flash",
       "gemini-3.5-flash-lite",
-      "gemini-3.1-flash-lite",
     ];
 
-    let lastError = null;
-    for (const modelName of modelsToTry) {
-      try {
-        response = await ai.models.generateContent({
-          model: modelName,
-          contents: finalPrompt,
-        });
-        if (response && response.text) break;
-      } catch (err) {
-        lastError = err;
+    const promises = modelsToRace.map(async (modelName) => {
+      const res = await ai.models.generateContent({
+        model: modelName,
+        contents: finalPrompt,
+        config: {
+          maxOutputTokens: 1200,
+          temperature: 0.7,
+        },
+      });
+
+      if (!res || !res.text || !res.text.trim()) {
+        throw new Error(`Empty response from ${modelName}`);
       }
-    }
 
-    if (!response || !response.text) {
-      throw lastError || new Error("Failed to generate response from Gemini API.");
-    }
+      return res.text.trim();
+    });
 
-    const reply = response.text?.trim();
-
-    if (!reply) {
-      throw new Error(
-        "Gemini returned an empty response."
-      );
-    }
+    const reply = await Promise.any(promises);
 
     return res.status(200).json({
       success: true,

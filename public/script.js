@@ -5,57 +5,39 @@ const sendButton = document.getElementById("sendButton");
 const clearButton = document.getElementById("clearButton");
 
 const roleSelector = document.getElementById("roleSelector");
-const techniqueSelector =
-  document.getElementById("techniqueSelector");
+const techniqueSelector = document.getElementById("techniqueSelector");
+const currentRole = document.getElementById("currentRole");
+const currentTechnique = document.getElementById("currentTechnique");
 
-const techniqueBadge =
-  document.getElementById("techniqueBadge");
+const techniqueBadge = document.getElementById("techniqueBadge");
+const techniqueDescription = document.getElementById("techniqueDescription");
 
-const techniqueDescription =
-  document.getElementById("techniqueDescription");
+const suggestionButtons = document.querySelectorAll(".suggestion-button");
 
-const suggestionButtons = document.querySelectorAll(
-  ".suggestion-button"
-);
+let lastUserMessage = "";
 
 /* About modal elements */
 
 const aboutButton = document.getElementById("aboutButton");
 const aboutModal = document.getElementById("aboutModal");
 
-const closeAboutButton =
-  document.getElementById("closeAboutButton");
-
-const closeAboutFooterButton =
-  document.getElementById("closeAboutFooterButton");
+const closeAboutButton = document.getElementById("closeAboutButton");
+const closeAboutFooterButton = document.getElementById("closeAboutFooterButton");
 
 /* Prompt preview modal elements */
 
-const viewPromptButton =
-  document.getElementById("viewPromptButton");
-
+const viewPromptButton = document.getElementById("viewPromptButton");
 const promptModal = document.getElementById("promptModal");
 
-const closePromptButton =
-  document.getElementById("closePromptButton");
+const closePromptButton = document.getElementById("closePromptButton");
+const closePromptFooterButton = document.getElementById("closePromptFooterButton");
 
-const closePromptFooterButton =
-  document.getElementById("closePromptFooterButton");
+const copyPromptButton = document.getElementById("copyPromptButton");
+const finalPromptPreview = document.getElementById("finalPromptPreview");
 
-const copyPromptButton =
-  document.getElementById("copyPromptButton");
-
-const finalPromptPreview =
-  document.getElementById("finalPromptPreview");
-
-const promptPreviewRole =
-  document.getElementById("promptPreviewRole");
-
-const promptPreviewTechnique =
-  document.getElementById("promptPreviewTechnique");
-
-const promptPreviewQuestion =
-  document.getElementById("promptPreviewQuestion");
+const promptPreviewRole = document.getElementById("promptPreviewRole");
+const promptPreviewTechnique = document.getElementById("promptPreviewTechnique");
+const promptPreviewQuestion = document.getElementById("promptPreviewQuestion");
 
 const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
@@ -86,6 +68,7 @@ if (newChatButton) {
               </div>
           </div>
           <h2>How can I accelerate your learning today?</h2>
+          <p class="hero-subtitle">Smart prompt-engineered intelligence designed for academic excellence, code evaluation, and concept mastery.</p>
       </div>
     `;
 
@@ -459,6 +442,10 @@ function downloadResponseAsPDF(
     <div class="pdf-divider"></div>
 
     <div class="pdf-meta-grid">
+      <div class="pdf-meta-item">
+        <span class="pdf-meta-label">Author / Developer:</span>
+        <span class="pdf-meta-val">Ayush Kumar Senapati (B.Tech CSE)</span>
+      </div>
       <div class="pdf-meta-item">
         <span class="pdf-meta-label">Assistant Role:</span>
         <span class="pdf-meta-val">${escapeHtml(selectedRole)}</span>
